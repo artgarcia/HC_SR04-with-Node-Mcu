@@ -97,6 +97,9 @@ void setup() {
 	Serial.print("Connected IP = ");
 	Serial.println(WiFi.localIP());
 
+	// start time client - used to get current time.
+	timeClient.begin();
+
 }
 
 void loop() {
@@ -114,5 +117,12 @@ void loop() {
 
 	Serial.print(distance);
 	Serial.println("Centimeter:");
+
+	String distanceJson = createJsonData("dist01", distance);
+	Serial.println(distanceJson);
+
+	// send json to Azure
+	httpRequest("POST", url, "application/atom+xml;type=entry;charset=utf-8", distanceJson);
+
 	delay(1000);
 }
