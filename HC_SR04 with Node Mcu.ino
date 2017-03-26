@@ -9,6 +9,8 @@ NODE MCU .9 esp 8266 and hc-sr04 distance sensor
 
 
 #include <SD.h>
+#include <wire.h>
+
 
 // need this lib for Secure SSL for ESP 8266 chip
 #include <WiFiClientSecure.h>  
@@ -33,11 +35,18 @@ long duration, distance, lastDistance;
 
 String passData[4];
 
+
 void setup() {
 
 	Serial.begin(9600);
+
+	Serial.println("Setup Distance Sensor");
 	pinMode(TRIGGER, OUTPUT);
 	pinMode(ECHO, INPUT);
+
+	Wire.pins(0, 2);
+	//lcd.begin(16, 2);
+	//lcd.println("hello");
 
 
 	// get data from sd card

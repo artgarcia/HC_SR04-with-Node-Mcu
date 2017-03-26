@@ -3,6 +3,7 @@
 #include <NTPClient.h>
 #include <WiFiUdp.h>
 
+#define OLED_address  0x3c                           // OLED I2C bus address
 
 WiFiUDP ntpUDP;
 
