@@ -8,23 +8,25 @@ NODE MCU .9 esp 8266 and hc-sr04 distance sensor
 */
 
 
-#include <SD.h>
-#include <wire.h>
-
 
 // common include file with additional user functions ise 
 // To use tabs with a .h extension, you need to #include it (using "double quotes" not <angle brackets>).                    
+
 #include "Common.h"
 #include <ESP8266WiFi.h>
 
 // need this lib for Secure SSL for ESP 8266 chip
 #include <WiFiClientSecure.h>  
 
+// http://easycoding.tn/tuniot/demos/code/
+// D3 -> SDA
+// D4 -> SCL      display( address of display, SDA,SCL)
+#include "SSD1306.h"
+SSD1306  display(0x3C, 2, 0);
 
 // NodeMCU Pin D1 > TRIGGER | Pin D2 > ECHO
 #define TRIGGER 5
 #define ECHO    4
-
 
 String netid, pwd, deviceId, url;
 long duration, distance, lastDistance;
@@ -35,6 +37,13 @@ String passData[4];
 void setup() {
 
 	Serial.begin(9600);
+	
+	display.init();
+	display.setTextAlignment(TEXT_ALIGN_LEFT);
+	display.flipScreenVertically();
+	display.setFont(ArialMT_Plain_10);
+	display.drawString(0, 0, "Screen Init complete");
+	display.display();
 
 	Serial.println("Setup Distance Sensor");
 	pinMode(TRIGGER, OUTPUT);
@@ -109,6 +118,10 @@ void setup() {
 
 void loop() {
 
+	display.clear();
+	display.drawString(0, 0, "Distance ");
+	display.display();
+
 	long duration, distance;
 	digitalWrite(TRIGGER, LOW);
 	delayMicroseconds(2);
@@ -122,6 +135,9 @@ void loop() {
 
 	Serial.print(distance);
 	Serial.println("Centimeter:");
+
+	display.drawString(0, 15, (String)distance);
+	display.display();
 
 	String distanceJson = createJsonData("dist01", distance);
 	Serial.println(distanceJson);

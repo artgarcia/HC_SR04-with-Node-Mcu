@@ -2,6 +2,10 @@
 #include <ArduinoJson.h>
 #include <NTPClient.h>
 #include <WiFiUdp.h>
+#include <SD.h>
+
+// need this lib for Secure SSL for ESP 8266 chip
+#include <WiFiClientSecure.h>  
 
 #define OLED_address  0x3c                           // OLED I2C bus address
 
