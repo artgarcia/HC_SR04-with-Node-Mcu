@@ -26,6 +26,7 @@ NTPClient timeClient(ntpUDP, "europe.pool.ntp.org", 3600, 60000);
 char hostnme[] = "ArtTempIOT.azure-devices.net";
 char authSAS[] = "SharedAccessSignature sr=ArtTempIOT.azure-devices.net&sig=vmUF6p3IANfHmNWrvk4Zf%2BlpngD365hUX9f%2FB2zNaUM%3D&se=1515799811&skn=iothubowner";
 
+
 String createJsonData(String devId, float distance)
 {
 	// create json object

@@ -64,8 +64,8 @@ void setup() {
 	deviceId = passData[2];
 	url = passData[3];
 
-	display.drawString(0, 15, "Connect to:" + netid);
-	display.drawString(0, 30, "pwd:" + pwd);
+	display.drawString(0, 15, "SSID:" + netid);
+	display.drawString(0, 30, "pwd :" + pwd);
 	display.drawString(0, 45, "Device Id:" + deviceId);
 	display.display();
 
@@ -81,7 +81,6 @@ void setup() {
 
 	// initialize wifi
 	WiFi.disconnect();
-
 	WiFi.begin((const char*)netid.c_str(), (const char*)pwd.c_str());
 	
 	Serial.print("Connecting to SSID:");
