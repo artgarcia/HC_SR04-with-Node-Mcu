@@ -38,22 +38,22 @@ void setup() {
 
 	Serial.begin(9600);
 	
+	// stup for display
 	display.init();
 	display.setTextAlignment(TEXT_ALIGN_LEFT);
 	display.flipScreenVertically();
 	display.setFont(ArialMT_Plain_10);
-	display.drawString(0, 0, "Screen Init complete");
+	display.drawString(0, 0, "Screen Init");
 	display.display();
 
+	// setup for distance sensor
 	Serial.println("Setup Distance Sensor");
 	pinMode(TRIGGER, OUTPUT);
 	pinMode(ECHO, INPUT);
 
-	//Wire.pins(0, 2);
-	//lcd.begin(16, 2);
-	//lcd.println("hello");
-
-
+	display.clear();
+	display.drawString(0, 0, "Read data from SD Card");
+	display.display();
 	// get data from sd card
 	// passing an array to house sd card information
 	getSDData(passData);
@@ -63,6 +63,11 @@ void setup() {
 	pwd = passData[1];
 	deviceId = passData[2];
 	url = passData[3];
+
+	display.drawString(0, 15, "Connect to:" + netid);
+	display.drawString(0, 30, "pwd:" + pwd);
+	display.drawString(0, 45, "Device Id:" + deviceId);
+	display.display();
 
 	// verify variables from sd card got into globals
 	Serial.print("NETID:");
@@ -111,15 +116,23 @@ void setup() {
 	Serial.print("Connected IP = ");
 	Serial.println(WiFi.localIP());
 
+	display.clear();
+	display.drawString(0, 0, "Connected:" + netid);
+	display.drawString(0, 15, "Local IP:");
+	display.drawString(0, 30, WiFi.localIP().toString());
+	display.display();
+
 	// start time client - used to get current time.
 	timeClient.begin();
+	// delay 5 sec
+	delay(5000);
 
 }
 
 void loop() {
 
 	display.clear();
-	display.drawString(0, 0, "Distance ");
+	display.drawString(0, 0, "Distance Sensor");
 	display.display();
 
 	long duration, distance;
@@ -137,6 +150,7 @@ void loop() {
 	Serial.println("Centimeter:");
 
 	display.drawString(0, 15, (String)distance);
+	display.drawString(25, 15, "CM");
 	display.display();
 
 	String distanceJson = createJsonData("dist01", distance);
@@ -145,5 +159,7 @@ void loop() {
 	// send json to Azure
 	httpRequest("POST", url, "application/atom+xml;type=entry;charset=utf-8", distanceJson);
 
+	display.drawStringMaxWidth(0, 30,100, distanceJson);
+	display.display();
 	delay(1000);
 }
