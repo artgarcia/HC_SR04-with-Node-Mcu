@@ -46,7 +46,6 @@ void setup() {
 	
 	DisplayText(0, 0, "Screen Init");
 
-
 	// setup for distance sensor
 	Serial.println("Setup Distance Sensor");
 	pinMode(TRIGGER, OUTPUT);
@@ -157,4 +156,11 @@ void loop() {
 	display.drawStringMaxWidth(0, 30,100, distanceJson);
 	display.display();
 	delay(1000);
+}
+
+
+void DisplayText(int row, int col, String data)
+{
+	display.drawString(row, col, data);
+	display.display();
 }

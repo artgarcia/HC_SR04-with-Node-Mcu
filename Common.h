@@ -48,12 +48,6 @@ String createJsonData(String devId, float distance)
 	return outdata;
 }
 
-void DisplayText(int row, int col, String data)
-{
-	display.drawString(row, col, data);
-	display.display();
-}
-
 
 void getSDData(String *passData)
 {
