@@ -43,8 +43,9 @@ void setup() {
 	display.setTextAlignment(TEXT_ALIGN_LEFT);
 	display.flipScreenVertically();
 	display.setFont(ArialMT_Plain_10);
-	display.drawString(0, 0, "Screen Init");
-	display.display();
+	
+	DisplayText(0, 0, "Screen Init");
+
 
 	// setup for distance sensor
 	Serial.println("Setup Distance Sensor");
@@ -52,8 +53,8 @@ void setup() {
 	pinMode(ECHO, INPUT);
 
 	display.clear();
-	display.drawString(0, 0, "Read data from SD Card");
-	display.display();
+	DisplayText(0, 0, "Read data from SD Card");
+
 	// get data from sd card
 	// passing an array to house sd card information
 	getSDData(passData);
@@ -64,11 +65,10 @@ void setup() {
 	deviceId = passData[2];
 	url = passData[3];
 
-	display.drawString(0, 15, "SSID:" + netid);
-	display.drawString(0, 30, "pwd :" + pwd);
-	display.drawString(0, 45, "Device Id:" + deviceId);
-	display.display();
-
+	DisplayText(0, 15, "SSID:" + netid);
+	DisplayText(0, 30, "pwd :" + pwd);
+	DisplayText(0, 45, "Device Id:" + deviceId);
+	
 	// verify variables from sd card got into globals
 	Serial.print("NETID:");
 	Serial.println(netid);
@@ -108,7 +108,6 @@ void setup() {
 			Serial.println(WiFi.status());
 			break;
 		}
-
 		
 	}
 
@@ -116,10 +115,9 @@ void setup() {
 	Serial.println(WiFi.localIP());
 
 	display.clear();
-	display.drawString(0, 0, "Connected:" + netid);
-	display.drawString(0, 15, "Local IP:");
-	display.drawString(0, 30, WiFi.localIP().toString());
-	display.display();
+	DisplayText(0, 0, "Connected:" + netid);
+	DisplayText(0, 15, "Local IP:");
+	DisplayText(0, 30, WiFi.localIP().toString());
 
 	// start time client - used to get current time.
 	timeClient.begin();
@@ -131,8 +129,7 @@ void setup() {
 void loop() {
 
 	display.clear();
-	display.drawString(0, 0, "Distance Sensor");
-	display.display();
+	DisplayText(0, 0, "Distance Sensor");
 
 	long duration, distance;
 	digitalWrite(TRIGGER, LOW);
@@ -148,9 +145,8 @@ void loop() {
 	Serial.print(distance);
 	Serial.println("Centimeter:");
 
-	display.drawString(0, 15, (String)distance);
-	display.drawString(25, 15, "CM");
-	display.display();
+	DisplayText(0, 15, (String)distance);
+	DisplayText(25, 15, "CM");
 
 	String distanceJson = createJsonData("dist01", distance);
 	Serial.println(distanceJson);
