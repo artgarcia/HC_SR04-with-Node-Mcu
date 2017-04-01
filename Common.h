@@ -19,13 +19,6 @@ WiFiClientSecure client;
 // update interval (in milliseconds, can be changed using setUpdateInterval() ).
 NTPClient timeClient(ntpUDP, "europe.pool.ntp.org", 3600, 60000);
 
-// endpoint to use to send message /devices/{device name}/messages/events?api-version=2016-02-03
-// host name address for your Azure IoT Hub
-// on device monitor generate a sas token on config page.
-//String uri = "/devices/esp8266v2/messages/events?api-version=2016-02-03";
-char hostnme[100];  // "ArtTempIOT.azure-devices.net";
-char authSAS[100];  // = "SharedAccessSignature sr=ArtTempIOT.azure-devices.net&sig=vmUF6p3IANfHmNWrvk4Zf%2BlpngD365hUX9f%2FB2zNaUM%3D&se=1515799811&skn=iothubowner";
-
  
 String createJsonData(String devId, float distance)
 {
