@@ -28,10 +28,10 @@ SSD1306  display(0x3C, 2, 0);
 #define TRIGGER 5
 #define ECHO    4
 
-String netid, pwd, deviceId, url;
+String netid, pwd, deviceId, url, host, sas;
 long duration, distance, lastDistance;
 
-String passData[4];
+String passData[6];
 
 
 void setup() {
@@ -64,6 +64,19 @@ void setup() {
 	deviceId = passData[2];
 	url = passData[3];
 
+	// endpoint to use to send message /devices/{device name}/messages/events?api-version=2016-02-03
+	// host =  address for your Azure IoT Hub
+	// sas  =  sas authorization token from below
+	//
+	// on device monitor generate a sas token on config page.
+	//String uri = "/devices/esp8266v2/messages/events?api-version=2016-02-03";
+	//
+	host = passData[4];
+	sas = passData[5];
+	
+	// replace device id in url 
+	url.replace("{0}", deviceId);
+
 	DisplayText(0, 15, "SSID:" + netid);
 	DisplayText(0, 30, "pwd :" + pwd);
 	DisplayText(0, 45, "Device Id:" + deviceId);
@@ -77,6 +90,12 @@ void setup() {
 	Serial.println(deviceId);
 	Serial.print("URL:");
 	Serial.println(url);
+
+	Serial.print("HOSTNAME:");
+	Serial.println(host);
+
+	Serial.print("SAS:");
+	Serial.println(sas);
 
 	// initialize wifi
 	WiFi.disconnect();
@@ -151,7 +170,7 @@ void loop() {
 	Serial.println(distanceJson);
 
 	// send json to Azure
-	httpRequest("POST", url, "application/atom+xml;type=entry;charset=utf-8", distanceJson);
+	httpRequest("POST", url, host,sas,"application/atom+xml;type=entry;charset=utf-8", distanceJson);
 
 	display.drawStringMaxWidth(0, 30,100, distanceJson);
 	display.display();

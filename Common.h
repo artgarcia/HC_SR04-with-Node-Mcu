@@ -23,8 +23,8 @@ NTPClient timeClient(ntpUDP, "europe.pool.ntp.org", 3600, 60000);
 // host name address for your Azure IoT Hub
 // on device monitor generate a sas token on config page.
 //String uri = "/devices/esp8266v2/messages/events?api-version=2016-02-03";
-char hostnme[] = "ArtTempIOT.azure-devices.net";
-char authSAS[] = "SharedAccessSignature sr=ArtTempIOT.azure-devices.net&sig=vmUF6p3IANfHmNWrvk4Zf%2BlpngD365hUX9f%2FB2zNaUM%3D&se=1515799811&skn=iothubowner";
+char hostnme[100];  // "ArtTempIOT.azure-devices.net";
+char authSAS[100];  // = "SharedAccessSignature sr=ArtTempIOT.azure-devices.net&sig=vmUF6p3IANfHmNWrvk4Zf%2BlpngD365hUX9f%2FB2zNaUM%3D&se=1515799811&skn=iothubowner";
 
  
 String createJsonData(String devId, float distance)
@@ -51,7 +51,7 @@ String createJsonData(String devId, float distance)
 
 void getSDData(String *passData)
 {
-	String str, netid, pwd, deviceId, url;
+	String str, netid, pwd, deviceId, url, hostname, sas;
 
 	File dataFile;
 	Serial.println("In getSDData");
@@ -88,21 +88,30 @@ void getSDData(String *passData)
 				str = dataFile.readStringUntil('|');
 				pwd = str;
 				Serial.println(pwd);
-				//sendToDisplay(30, 15, pwd);
 			}
 			if (dataFile.find("DEVICEID:"))
 			{
 				str = dataFile.readStringUntil('|');
 				deviceId = str;
 				Serial.println(deviceId);
-				//sendToDisplay(0, 30, deviceId);
 			}
 			if (dataFile.find("URL:"))
 			{
 				str = dataFile.readStringUntil('|');
 				url = str;
 				Serial.println(url);
-				//sendToDisplay(50, 30, url);
+			}
+			if (dataFile.find("HOSTNAME:"))
+			{
+				str = dataFile.readStringUntil('|');
+				hostname = str;
+				Serial.println(hostname);
+			}
+			if (dataFile.find("SAS:"))
+			{
+				str = dataFile.readStringUntil('|');
+				sas = str;
+				Serial.println(sas);
 			}
 		}
 		// close the file
@@ -113,10 +122,14 @@ void getSDData(String *passData)
 	passData[1] = pwd;
 	passData[2] = deviceId;
 	passData[3] = url;
+	passData[4] = hostname;
+	passData[5] = sas;
+
+
 }
 
 
-void httpRequest(String verb, String uri, String contentType, String content)
+void httpRequest(String verb, String uri, String host, String sas, String contentType, String content)
 {
 	Serial.println("--- Start Process --- ");
 	if (verb.equals("")) return;
@@ -127,10 +140,10 @@ void httpRequest(String verb, String uri, String contentType, String content)
 	client.stop();
 
 	// if there's a successful connection:
-	if (client.connect(hostnme, 443)) {
+	if (client.connect( (const char*)host.c_str(), 443) ) {
 		Serial.println("--- We are Connected --- ");
 		Serial.print("*** Sending Data To:  ");
-		Serial.println(hostnme + uri);
+		Serial.println(host + uri);
 
 		Serial.print("*** Data To Send:  ");
 		Serial.println(content);
@@ -139,11 +152,12 @@ void httpRequest(String verb, String uri, String contentType, String content)
 		client.print(" ");
 		client.print(uri);  // any of the URI
 		client.println(" HTTP/1.1");
+
 		client.print("Host: ");
-		client.println(hostnme);  //with hostname header
+		client.println( (const char*)host.c_str() );  //with hostname header
+
 		client.print("Authorization: ");
-		client.println(authSAS);  //Authorization SAS token obtained from Azure IoT device explorer
-								  //client.println("Connection: close");
+		client.println( (const char*)sas.c_str() );  //Authorization SAS token obtained from Azure IoT device explorer
 
 		if (verb.equals("POST"))
 		{
