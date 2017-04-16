@@ -4,6 +4,7 @@
 ********************************************
 14CORE ULTRASONIC DISTANCE SENSOR CODE TEST
 NODE MCU .9 esp 8266 and hc-sr04 distance sensor
+modified by Blain Barton March 3rd, 2017
 ********************************************
 */
 
