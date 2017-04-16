@@ -7,7 +7,13 @@
 // need this lib for Secure SSL for ESP 8266 chip
 #include <WiFiClientSecure.h>  
 
+
+// http://easycoding.tn/tuniot/demos/code/
+// D3 -> SDA
+// D4 -> SCL      display( address of display, SDA,SCL)
+#include "SSD1306.h"
 #define OLED_address  0x3c                           // OLED I2C bus address
+SSD1306  display(OLED_address, 2, 0);
 
 WiFiUDP ntpUDP;
 
@@ -19,7 +25,9 @@ WiFiClientSecure client;
 // update interval (in milliseconds, can be changed using setUpdateInterval() ).
 NTPClient timeClient(ntpUDP, "europe.pool.ntp.org", 3600, 60000);
 
- 
+// declare functions
+void DisplayText(int row, int col, String data);
+
 String createJsonData(String devId, float distance)
 {
 	// create json object
@@ -40,7 +48,6 @@ String createJsonData(String devId, float distance)
 	root.printTo(outdata);
 	return outdata;
 }
-
 
 void getSDData(String *passData)
 {
@@ -121,7 +128,6 @@ void getSDData(String *passData)
 
 }
 
-
 void httpRequest(String verb, String uri, String host, String sas, String contentType, String content)
 {
 	Serial.println("--- Start Process --- ");
@@ -178,4 +184,10 @@ void httpRequest(String verb, String uri, String host, String sas, String conten
 	}
 
 	Serial.println("--- Send complete ----");
+}
+
+void DisplayText(int row, int col, String data)
+{
+	display.drawString(row, col, data);
+	display.display();
 }

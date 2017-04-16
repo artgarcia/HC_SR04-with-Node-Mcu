@@ -18,12 +18,6 @@ NODE MCU .9 esp 8266 and hc-sr04 distance sensor
 // need this lib for Secure SSL for ESP 8266 chip
 #include <WiFiClientSecure.h>  
 
-// http://easycoding.tn/tuniot/demos/code/
-// D3 -> SDA
-// D4 -> SCL      display( address of display, SDA,SCL)
-#include "SSD1306.h"
-SSD1306  display(0x3C, 2, 0);
-
 // NodeMCU Pin D1 > TRIGGER | Pin D2 > ECHO
 #define TRIGGER 5
 #define ECHO    4
@@ -177,9 +171,3 @@ void loop() {
 	delay(1000);
 }
 
-
-void DisplayText(int row, int col, String data)
-{
-	display.drawString(row, col, data);
-	display.display();
-}
