@@ -134,6 +134,7 @@ void setup() {
 
 	// start time client - used to get current time.
 	timeClient.begin();
+
 	// delay 5 sec
 	delay(5000);
 
@@ -161,7 +162,7 @@ void loop() {
 	DisplayText(0, 15, (String)distance);
 	DisplayText(25, 15, "CM");
 
-	String distanceJson = createJsonData("dist01", distance);
+	String distanceJson = createJsonData(deviceId, distance);
 	Serial.println(distanceJson);
 
 	// send json to Azure
