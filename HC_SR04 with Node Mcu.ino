@@ -24,7 +24,8 @@ modified by Blain Barton March 3rd, 2017
 #define ECHO    4
 
 String netid, pwd, deviceId, url, host, sas;
-long duration, distance, lastDistance,waittime;
+long duration, distance, lastDistance;
+int waittime;
 
 String passData[7];
 
@@ -68,7 +69,7 @@ void setup() {
 	//
 	host = passData[4];
 	sas = passData[5];
-	waittime = (long)passData[6].c_str();
+	waittime = (int)passData[6].toInt();
 
 	// replace device id in url 
 	url.replace("{0}", deviceId);
@@ -92,6 +93,9 @@ void setup() {
 
 	Serial.print("SAS:");
 	Serial.println(sas);
+
+	Serial.print("DELAY:");
+	Serial.println(waittime);
 
 	// initialize wifi
 	WiFi.disconnect();
@@ -181,7 +185,8 @@ void loop() {
 
 	display.clear();
 	DisplayText(0, 0, "Distance Sensor");
-	DisplayText(0, 30, "Waiting MS :" + waittime );
+	DisplayText(0, 30, "Waiting MS :" + passData[6] );
+
 	delay(waittime);
 }
 
