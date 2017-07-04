@@ -24,9 +24,9 @@ modified by Blain Barton March 3rd, 2017
 #define ECHO    4
 
 String netid, pwd, deviceId, url, host, sas;
-long duration, distance, lastDistance;
+long duration, distance, lastDistance,waittime;
 
-String passData[6];
+String passData[7];
 
 
 void setup() {
@@ -68,7 +68,8 @@ void setup() {
 	//
 	host = passData[4];
 	sas = passData[5];
-	
+	waittime = (long)passData[6].c_str();
+
 	// replace device id in url 
 	url.replace("{0}", deviceId);
 
@@ -165,11 +166,22 @@ void loop() {
 	String distanceJson = createJsonData(deviceId, distance);
 	Serial.println(distanceJson);
 
-	// send json to Azure
-	httpRequest("POST", url, host,sas,"application/atom+xml;type=entry;charset=utf-8", distanceJson);
 
-	display.drawStringMaxWidth(0, 30,100, distanceJson);
-	display.display();
-	delay(1000);
+	if (distance != lastDistance)
+	{
+		// send json to Azure
+		httpRequest("POST", url, host, sas, "application/atom+xml;type=entry;charset=utf-8", distanceJson);
+
+		display.drawStringMaxWidth(0, 30, 100, distanceJson);
+		display.display();
+		delay(1000);
+		lastDistance = distance;
+
+	}
+
+	display.clear();
+	DisplayText(0, 0, "Distance Sensor");
+	DisplayText(0, 30, "Waiting MS :" + waittime );
+	delay(waittime);
 }
 

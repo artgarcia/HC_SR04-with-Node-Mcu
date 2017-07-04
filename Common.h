@@ -7,6 +7,7 @@
 // need this lib for Secure SSL for ESP 8266 chip
 #include <WiFiClientSecure.h>  
 
+// set wait to  DELAY:1800000|  30 minutes
 
 // http://easycoding.tn/tuniot/demos/code/
 // D3 -> SDA
@@ -51,7 +52,7 @@ String createJsonData(String devId, float distance)
 
 void getSDData(String *passData)
 {
-	String str, netid, pwd, deviceId, url, hostname, sas;
+	String str, netid, pwd, deviceId, url, hostname, sas,wait_time;
 
 	File dataFile;
 	Serial.println("In getSDData");
@@ -113,6 +114,12 @@ void getSDData(String *passData)
 				sas = str;
 				Serial.println(sas);
 			}
+			if (dataFile.find("DELAY:"))
+			{
+				str = dataFile.readStringUntil('|');
+				wait_time = str;
+				Serial.println(sas);
+			}
 		}
 		// close the file
 		dataFile.close();
@@ -124,6 +131,7 @@ void getSDData(String *passData)
 	passData[3] = url;
 	passData[4] = hostname;
 	passData[5] = sas;
+	passData[6] = wait_time;
 
 
 }
