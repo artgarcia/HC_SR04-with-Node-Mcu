@@ -167,7 +167,7 @@ void loop() {
 	DisplayText(0, 15, (String)distance);
 	DisplayText(25, 15, "CM");
 
-	String distanceJson = createJsonData(deviceId, distance);
+	String distanceJson = createJsonData(deviceId, distance,duration);
 	Serial.println(distanceJson);
 
 

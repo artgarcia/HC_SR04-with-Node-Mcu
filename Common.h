@@ -29,7 +29,7 @@ NTPClient timeClient(ntpUDP, "europe.pool.ntp.org", 3600, 60000);
 // declare functions
 void DisplayText(int row, int col, String data);
 
-String createJsonData(String devId, float distance)
+String createJsonData(String devId, float distance,float duration)
 {
 	// create json object
 	StaticJsonBuffer<200> jsonBuffer;
@@ -44,6 +44,7 @@ String createJsonData(String devId, float distance)
 	root["DeviceId"] = devId;
 	root["KeyId"] = (String)timeClient.getEpochTime();
 	root["distance"] = distance;
+	root["duration"] = duration;
 
 	// convert to string
 	root.printTo(outdata);
