@@ -4,17 +4,25 @@
 ********************************************
 14CORE ULTRASONIC DISTANCE SENSOR CODE TEST
 NODE MCU .9 esp 8266 and hc-sr04 distance sensor
-modified by Blain Barton March 3rd, 2017
+
 ********************************************
 */
 
 
 
+
+#include <ArduinoJson.h>
+#include <NTPClient.h>
+#include <ESP8266WiFi.h>
+#include <SD.h>
+#include <SSD1306.h>
+#include <Wire.h>
+
+#include <SPI.h>
+
 // common include file with additional user functions ise 
 // To use tabs with a .h extension, you need to #include it (using "double quotes" not <angle brackets>).                    
-
 #include "Common.h"
-#include <ESP8266WiFi.h>
 
 // need this lib for Secure SSL for ESP 8266 chip
 #include <WiFiClientSecure.h>  

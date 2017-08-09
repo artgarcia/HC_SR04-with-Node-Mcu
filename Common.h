@@ -2,7 +2,7 @@
 #include <ArduinoJson.h>
 #include <NTPClient.h>
 #include <WiFiUdp.h>
-#include <SD.h>
+
 
 // need this lib for Secure SSL for ESP 8266 chip
 #include <WiFiClientSecure.h>  
@@ -12,7 +12,8 @@
 // http://easycoding.tn/tuniot/demos/code/
 // D3 -> SDA
 // D4 -> SCL      display( address of display, SDA,SCL)
-#include "SSD1306.h"
+
+
 #define OLED_address  0x3c                           // OLED I2C bus address
 SSD1306  display(OLED_address, 2, 0);
 
