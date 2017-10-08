@@ -3,6 +3,8 @@
 #include <NTPClient.h>
 #include <WiFiUdp.h>
 
+// need this lib for mqtt
+#include <PubSubClient.h>
 
 // need this lib for Secure SSL for ESP 8266 chip
 #include <WiFiClientSecure.h>  
@@ -22,6 +24,10 @@ WiFiUDP ntpUDP;
 // setup https client for 8266 SSL client
 WiFiClientSecure client;
 
+// setup mqtt client
+//PubSubClient client(mqttclient);
+
+
 // You can specify the time server pool and the offset (in seconds, can be
 // changed later with setTimeOffset() ). Additionaly you can specify the
 // update interval (in milliseconds, can be changed using setUpdateInterval() ).
@@ -29,8 +35,49 @@ NTPClient timeClient(ntpUDP, "europe.pool.ntp.org", 3600, 60000);
 
 // declare functions
 void DisplayText(int row, int col, String data);
+void connect_mqtt(char* id, char* user, char* pass, char* endpoint);
 
-String createJsonData(String devId, float distance,float duration)
+// function to connect to MQTT server
+//void connect_mqtt(char* id, char* user,char* pass,char* endpoint) {
+//
+//	// Loop until we're reconnected
+//	while (!client.connected()) {
+//		Serial.print("Attempting MQTT connection...");
+//
+//		// Attempt to connect
+//		if (client.connect(id, user, pass)) {
+//			Serial.println("connected");
+//
+//			// ... and resubscribe
+//			client.subscribe(endpoint);
+//		}
+//		else {
+//
+//			Serial.print("failed, rc=");
+//			Serial.print(client.state());
+//			Serial.println("try again in 5 seconds");
+//
+//			// Wait 5 seconds before retrying
+//			delay(5000);
+//		}
+//	}
+//}
+//
+// callback function for when a message is dequeued from the MQTT server
+//void callback(char* topic, byte* payload, unsigned int length) {
+//
+//	// print message to serial for debugging
+//	Serial.print("Message arrived: ");
+//	DisplayText(30, 0, "MQQT Message arrived");
+//
+//	for (int i = 0; i < length; i++) {
+//		Serial.print((char)payload[i]);
+//	}
+//
+//	Serial.println('---');
+//}
+
+String createJsonStringData(String devId, float distance,float duration)
 {
 	// create json object
 	StaticJsonBuffer<200> jsonBuffer;
@@ -50,6 +97,27 @@ String createJsonData(String devId, float distance,float duration)
 	// convert to string
 	root.printTo(outdata);
 	return outdata;
+}
+
+char* createJsonCharData(String devId, float distance, float duration)
+{
+	// create json object
+	StaticJsonBuffer<200> jsonBuffer;
+	char buffer[256];
+	String outdata;
+
+	// get time from 1/1/1970 to use as key
+	timeClient.update();
+	String key = (String)timeClient.getEpochTime();
+
+	JsonObject& root = jsonBuffer.createObject();
+	root["DeviceId"] = devId;
+	root["KeyId"] = (String)timeClient.getEpochTime();
+	root["distance"] = distance;
+	root["duration"] = duration;
+
+	root.printTo(buffer, sizeof(buffer));
+	return buffer;
 }
 
 void getSDData(String *passData)
@@ -135,6 +203,9 @@ void getSDData(String *passData)
 	passData[5] = sas;
 	passData[6] = wait_time;
 
+	passData[7] = hostname + "/" + deviceId;							//iothub_user
+	passData[8] = "devices/" + deviceId + "/messages/devicebound/#";	//iothub_subscribe_endpoinp
+	passData[9] = "devices/" + deviceId + "/messages/events/";			//iothub_publish_endpoint
 
 }
 

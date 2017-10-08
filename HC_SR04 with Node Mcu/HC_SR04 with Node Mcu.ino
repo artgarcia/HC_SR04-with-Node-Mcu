@@ -10,7 +10,7 @@ NODE MCU .9 esp 8266 and hc-sr04 distance sensor
 
 
 
-#include "mqtt.h"
+
 #include <ArduinoJson.h>
 #include <NTPClient.h>
 #include <ESP8266WiFi.h>
@@ -27,19 +27,16 @@ NODE MCU .9 esp 8266 and hc-sr04 distance sensor
 // need this lib for Secure SSL for ESP 8266 chip
 #include <WiFiClientSecure.h>  
 
-// need this lib for mqtt
-#include <PubSubClient.h>
-
 // NodeMCU Pin D1 > TRIGGER | Pin D2 > ECHO
 #define TRIGGER 5
 #define ECHO    4
 
 String netid, pwd, deviceId, url, host, sas;
-//const char* iothub_publish_endpoint, iothub_use, iothub_subscribe_endpoint;
 long duration, distance, lastDistance;
 int waittime;
 
-String passData[10];
+String passData[7];
+
 
 void setup() {
 
@@ -50,6 +47,7 @@ void setup() {
 	display.setTextAlignment(TEXT_ALIGN_LEFT);
 	display.flipScreenVertically();
 	display.setFont(ArialMT_Plain_10);
+	
 	DisplayText(0, 0, "Screen Init");
 
 	// setup for distance sensor
@@ -69,11 +67,6 @@ void setup() {
 	pwd = passData[1];
 	deviceId = passData[2];
 	url = passData[3];
-
-	// for mqtt connection
-	const char* iothub_use = (const char*)passData[7].c_str();
-	const char* iothub_subscribe_endpoint = (const char*)passData[8].c_str();
-	const char* iothub_publish_endpoint = (const char*)passData[9].c_str();
 
 	// endpoint to use to send message /devices/{device name}/messages/events?api-version=2016-02-03
 	// host =  address for your Azure IoT Hub
@@ -155,22 +148,12 @@ void setup() {
 	// start time client - used to get current time.
 	timeClient.begin();
 
-	// set up connection and callback for MQTT server
-	//client.setServer((const char*)url.c_str(), 8883);
-	//client.setCallback(callback);
-
-	// connect to MQTT
-	//connect_mqtt();
-	
 	// delay 5 sec
 	delay(5000);
 
 }
 
 void loop() {
-
-	//client.loop();
-
 
 	display.clear();
 	DisplayText(0, 0, "Distance Sensor");
@@ -192,9 +175,9 @@ void loop() {
 	DisplayText(0, 15, (String)distance);
 	DisplayText(25, 15, "CM");
 
-	//char distanceCharJson = createJsonCharData(deviceId, distance,duration);
-	String distanceJson = createJsonStringData(deviceId, distance, duration);
+	String distanceJson = createJsonData(deviceId, distance,duration);
 	Serial.println(distanceJson);
+
 
 	if (distance != lastDistance)
 	{
@@ -205,11 +188,7 @@ void loop() {
 		display.display();
 		delay(1000);
 		lastDistance = distance;
-		
-		// publish
-		//Serial.print("publish Endpoint");
-		//Serial.println(iothub_publish_endpoint);
-		//client.publish(iothub_publish_endpoint, distanceCharJson);
+
 	}
 
 	display.clear();
@@ -218,6 +197,4 @@ void loop() {
 
 	delay(waittime);
 }
-
-
 
